@@ -17,8 +17,8 @@
 // a test_packet_t element for each sample, this allows us to get and use
 // the packet length, which will be helpful later.
 test_packet_t TEST_CASES[] = {
-    // MAKE_PACKET(raw_packet_icmp_frame198),
-    // MAKE_PACKET(raw_packet_icmp_frame362),
+    MAKE_PACKET(raw_packet_icmp_frame198),
+    MAKE_PACKET(raw_packet_icmp_frame362),
     MAKE_PACKET(raw_packet_arp_frame78)};
 
 // !!!!!!!!!!!!!!!!!!!!! WHAT YOU NEED TO DO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -201,14 +201,9 @@ void print_arp(arp_packet_t *arp)
  */
 bool check_ip_for_icmp(ip_packet_t *ip)
 {
-    // TODO:  This function inspects the provided IP packet and extracts
-    // the protocol.  If the protocol is ICMP_PTYPE then we return true
-    // otherwise we return false.  The function header gives some more
-    // hints.
+    // Compare IP packet's protocol and return if it is ICMP (1) or not.
 
-    // remove this after you implement the logic, just here to make sure
-    // the program compiles
-    return false;
+    return ip->ip_hdr.protocol == 1;
 }
 
 /*
@@ -220,15 +215,13 @@ bool check_ip_for_icmp(ip_packet_t *ip)
  */
 icmp_packet_t *process_icmp(ip_packet_t *ip)
 {
-    // TODO: Implement this function.  Convert ip_packet via
-    // type conversion to icmp_packet_t and then convert the
-    // network byte order fields to host byte order fields using
-    // ntohs() and/or ntohl().  Return a pointer to an icmp_packet_t
-    // You do not need to allocate any memory.
+    // Convert IP packet to ICMP packet and convert network byte order fields
+    icmp_packet_t *icmp_frame;
+    icmp_frame = (icmp_packet_t *)ip;
 
-    // remove this after you implement the logic, just here to make sure
-    // the program compiles
-    return (icmp_packet_t *)ip;
+    icmp_frame->icmp_hdr.checksum = ntohs(icmp_frame->icmp_hdr.checksum);
+
+    return icmp_frame;
 }
 
 /*
