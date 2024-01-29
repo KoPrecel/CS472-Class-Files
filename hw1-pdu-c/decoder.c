@@ -269,9 +269,19 @@ icmp_echo_packet_t *process_icmp_echo(icmp_packet_t *icmp)
  */
 void print_icmp_echo(icmp_echo_packet_t *icmp_packet)
 {
-    // TODO:  take the icmp_packet parameter, of type icmp_echo_packet_t
-    // and print it out nicely.  My output looks like below, but you dont
-    // have to make it look exactly like this, just something nice.
+    // Print ICMP Echo packet in a nice format
+    uint16_t payload_size = ICMP_Payload_Size(icmp_packet);
+
+    printf("ICMP Type %d\n", icmp_packet->icmp_echo_hdr.icmp_hdr.type);
+    printf("ICMP PACKET DETAILS\n");
+    printf("\ttype:\t\t%#04x\n", icmp_packet->icmp_echo_hdr.icmp_hdr.type);
+    printf("\tchecksum:\t%#06x\n", icmp_packet->icmp_echo_hdr.icmp_hdr.checksum);
+    printf("\tid:\t\t%#06x\n", icmp_packet->icmp_echo_hdr.id);
+    printf("\tsequence:\t%#06x\n", icmp_packet->icmp_echo_hdr.sequence);
+    printf("\ttimestamp:\t%#14x\n", icmp_packet->icmp_echo_hdr.timestamp);
+    printf("\tpayload:\t%d bytes\n", payload_size);
+    printf("ECHO Timestamp: %s\n", get_ts_formatted(icmp_packet->icmp_echo_hdr.timestamp, icmp_packet->icmp_echo_hdr.timestamp_ms));
+
     /*
     Packet length = 98 bytes
     Detected raw frame type from ethernet header: 0x800
@@ -286,16 +296,6 @@ void print_icmp_echo(icmp_echo_packet_t *icmp_packet)
          payload:   48 bytes
          ECHO Timestamp: TS = 2023-09-22 21:06:54.57804
      */
-
-    // remove this, just a placeholder
-    printf("This is where you place your logic to print your ICMP echo PDU header\n");
-
-    // after you print the echo header, print the payload.
-
-    // We can calculate the payload size using a macro i provided for you in
-    // packet.h. Check it out, but I am providing you the code to call it here
-    // correctly.  You can thank me later.
-    uint16_t payload_size = ICMP_Payload_Size(icmp_packet);
 
     // Now print the payload data
     print_icmp_payload(icmp_packet->icmp_payload, payload_size);
@@ -337,8 +337,18 @@ void print_icmp_payload(uint8_t *payload, uint16_t payload_size)
     // function header, you can alter your output just make sure it looks
     // nice.  I provided the alogorithm for how I printed the above out
     // in the function header.
+    int line_len = 8;
 
-    printf("delete this, but this is where your output goes\n");
-    printf("This is how to print a hex 5 nicely: %02x\n", 5);
-    printf("This is how to print a long value of 20000 nicely: %04lx\n", 2000l);
+    printf("OFFSET | CONTENTS\n");
+    printf("-------------------------------------------------------\n");
+    for (size_t i = 0; i < payload_size; i++)
+    {
+        if (i % line_len == 0)
+        {
+            printf("%#06x | ", i);
+        }
+        printf("%#04x ", payload[i]);
+        if (i % line_len == line_len - 1)
+            printf("\n");
+    }
 }
