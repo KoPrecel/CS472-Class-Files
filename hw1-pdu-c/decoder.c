@@ -232,15 +232,9 @@ icmp_packet_t *process_icmp(ip_packet_t *ip)
  */
 bool is_icmp_echo(icmp_packet_t *icmp)
 {
-    // TODO:  This function inspects the provided ICMP and checks
-    // its type.  If the type is ICMP_ECHO_REQUEST or ICMP_ECHO_RESPONSE
-    // then reutrn true otherwise we return false.  The function header
-    // gives some more hints.  The constants are defined in packet.h so take
-    // a look there as well.
+    // Returns whether ICMP type is either echo request or echo reply
 
-    // remove this after you implement the logic, just here to make sure
-    // the program compiles
-    return false;
+    return icmp->icmp_hdr.type == ICMP_ECHO_REQUEST || icmp->icmp_hdr.type == ICMP_ECHO_RESPONSE;
 }
 
 /*
