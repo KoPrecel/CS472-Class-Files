@@ -150,11 +150,28 @@ arp_packet_t *process_arp(raw_packet_t raw_packet)
  */
 void print_arp(arp_packet_t *arp)
 {
-    // TODO:  take the arp parameter, of type arp_packet_t and print it out
-    // nicely.  My output looks like below, but you dont have to make it look
-    // exactly like this, just something nice.
+    // print out ARP packet in a nice format
+
+    char spa[16];
+    char sha[32];
+    char tpa[16];
+    char tha[32];
+
+    ip_toStr(arp->arp_hdr.spa, spa, 16);
+    ip_toStr(arp->arp_hdr.tpa, tpa, 16);
+    mac_toStr(arp->arp_hdr.sha, sha, 32);
+    mac_toStr(arp->arp_hdr.tha, tha, 32);
+
     printf("ARP PACKET DETAILS\n");
-    printf("\t htype: %#06x");
+    printf("\thtype:\t%#06x\n", arp->arp_hdr.htype);
+    printf("\tptype:\t%#06x\n", arp->arp_hdr.ptype);
+    printf("\thlen:\t%d\n", arp->arp_hdr.hlen);
+    printf("\tplen:\t%d\n", arp->arp_hdr.plen);
+    printf("\top:\t%d\n", arp->arp_hdr.op);
+    printf("\tspa:\t%s\n", spa);
+    printf("\tsha:\t%s\n", sha);
+    printf("\ttpa:\t%s\n", tpa);
+    printf("\ttha:\t%s\n", tha);
     /*
     Packet length = 60 bytes
     Detected raw frame type from ethernet header: 0x806
@@ -170,7 +187,6 @@ void print_arp(arp_packet_t *arp)
          tpa:       192.168.50.99
          tha:       00:00:00:00:00:00
      */
-    printf("remove this, for now just printing hello from ARP\n");
 }
 
 /********************************************************************************/
