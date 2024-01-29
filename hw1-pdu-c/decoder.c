@@ -245,15 +245,16 @@ bool is_icmp_echo(icmp_packet_t *icmp)
  */
 icmp_echo_packet_t *process_icmp_echo(icmp_packet_t *icmp)
 {
-    // TODO: Implement this function.  Convert icmp_packet_t via
-    // type conversion to icmp_echo_packet_t and then convert the
-    // network byte order fields to host byte order fields using
-    // ntohs() and/or ntohl().  Return a pointer to an icmp_echo_packet_t
-    // You do not need to allocate any memory.
+    // Convert ICMP packet to ICMP ECHO packet and convert network byte order fields
+    icmp_echo_packet_t *icmp_echo_frame;
+    icmp_echo_frame = (icmp_echo_packet_t *)icmp;
 
-    // remove this after you implement the logic, just here to make sure
-    // the program compiles
-    return (icmp_echo_packet_t *)icmp;
+    icmp_echo_frame->icmp_echo_hdr.id = ntohs(icmp_echo_frame->icmp_echo_hdr.id);
+    icmp_echo_frame->icmp_echo_hdr.sequence = ntohs(icmp_echo_frame->icmp_echo_hdr.sequence);
+    icmp_echo_frame->icmp_echo_hdr.timestamp = ntohl(icmp_echo_frame->icmp_echo_hdr.timestamp);
+    icmp_echo_frame->icmp_echo_hdr.timestamp_ms = ntohl(icmp_echo_frame->icmp_echo_hdr.timestamp_ms);
+
+    return icmp_echo_frame;
 }
 
 /*
