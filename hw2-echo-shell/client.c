@@ -9,6 +9,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/un.h>
+#include <getopt.h>
 
 #define BUFF_SZ 512
 static uint8_t send_buffer[BUFF_SZ];
@@ -139,15 +140,21 @@ static void start_client(cs472_proto_header_t *header, uint8_t *packet)
     addr.sin_addr.s_addr = inet_addr("127.0.0.1");
     addr.sin_port = htons(PORT_NUM);
 
-    /*
-     * TODO:  The next things you need to do is to handle the cleint
-     * socket to send things to the server, basically make the following
-     * calls:
-     *
-     *      connect()
-     *      send() - recall that the formatted packet is passed in
-     *      recv() - get the response back from the server
-     */
+    if (connect(data_socket, (const struct sockaddr *)&addr, sizeof(struct sockaddr_in)) == -1)
+    {
+        perror("The server is down.\n");
+        exit(EXIT_FAILURE);
+    }
+    if (send(data_socket, packet, header->len, 0) == -1)
+    {
+        perror("Header write error.\n");
+        exit(EXIT_FAILURE);
+    }
+    if (recv(data_socket, recv_buffer, sizeof(recv_buffer), 0) == -1)
+    {
+        perror("Read error.\n");
+        exit(EXIT_FAILURE);
+    }
 
     // Now process what the server sent, here is some helper code
     cs472_proto_header_t *pcktPointer = (cs472_proto_header_t *)recv_buffer;
