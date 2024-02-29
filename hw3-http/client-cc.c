@@ -68,7 +68,7 @@ int process_request(const char *host, uint16_t port, char *resource)
     bytes_recvd = recv(sock, recv_buff, sizeof(recv_buff), 0);
     printf("%.*s", bytes_recvd, recv_buff);
     content_length = get_http_content_len(recv_buff, sizeof(recv_buff));
-    remaining_bytes = content_length - bytes_recvd;
+    remaining_bytes = content_length - bytes_recvd + get_http_header_len(recv_buff, sizeof(recv_buff));
     total_bytes += bytes_recvd;
     while (remaining_bytes > 0)
     {
